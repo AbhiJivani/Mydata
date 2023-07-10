@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
 
@@ -24,11 +25,20 @@ public class RecycleviewActivity extends AppCompatActivity {
         binding=ActivityRecycleviewBinding.inflate(getLayoutInflater());
         View view=binding.getRoot();
         setContentView(view);
+        showData();
 
-        idList=getIntent().getIntegerArrayListExtra("idlist");
-        nameList=getIntent().getStringArrayListExtra("namelist");
-        emailList=getIntent().getStringArrayListExtra("emaillist");
+    }
 
+    private void showData()
+    {
+        MydataBase mydataBase=new MydataBase(RecycleviewActivity.this);
+        Cursor cursor=mydataBase.showData();
+        while (cursor.moveToNext())
+        {
+            idList.add(cursor.getInt(0));
+            nameList.add(cursor.getString(1));
+            emailList.add(cursor.getString(2));
+        }
         RecyclerAdapter adapter=new RecyclerAdapter(RecycleviewActivity.this, idList,nameList,emailList);
         LinearLayoutManager manager=new LinearLayoutManager(getApplicationContext());
         manager.setOrientation(LinearLayoutManager.VERTICAL);

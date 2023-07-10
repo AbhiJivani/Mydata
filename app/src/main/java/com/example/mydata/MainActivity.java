@@ -42,23 +42,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Cursor cursor=mydataBase.showData();
-                while (cursor.moveToNext())
-                {
-//                    id=cursor.getInt(0);
-//                    name=cursor.getString(1);
-//                    email=cursor.getString(2);
-                    idList.add(cursor.getInt(0));
-                    nameList.add(cursor.getString(1));
-                    emailList.add(cursor.getString(2));
-
-
-                }
-                Log.d("TTT", "onClick: id="+idList+"\tName="+nameList+"\tEmail="+emailList);
                 Intent intent=new Intent(MainActivity.this,RecycleviewActivity.class);
-                intent.putExtra("idlist",idList);
-                intent.putExtra("namelist",nameList);
-                intent.putExtra("emaillist",emailList);
                 startActivity(intent);
             }
         });

@@ -39,4 +39,17 @@ public class MydataBase extends SQLiteOpenHelper {
         Cursor cursor=db.rawQuery(query,null);
         return cursor;
     }
+
+    public void updateData(Integer id, String name, String email)
+    {
+        String query="update Emp set NAME='"+name+"',EMAIL='"+email+"' where ID="+id+"";
+        SQLiteDatabase db=getWritableDatabase();
+        db.execSQL(query);
+    }
+
+    public void deleteData(Integer id) {
+        String query="delete from Emp where ID="+id+"";
+        SQLiteDatabase db=getWritableDatabase();
+        db.execSQL(query);
+    }
 }
