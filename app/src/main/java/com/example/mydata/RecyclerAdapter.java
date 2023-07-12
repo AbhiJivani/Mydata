@@ -1,10 +1,18 @@
 package com.example.mydata;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,16 +43,62 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.Recycl
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerAdapter.RecyclerHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerAdapter.RecyclerHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.idtxt.setText(""+idList.get(position));
         holder.nametxt.setText(""+nameList.get(position));
         holder.emailtxt.setText(""+emailList.get(position));
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MydataBase mydataBase=new MydataBase(recycleviewActivity);
-                mydataBase.deleteData(idList.get(holder.getAdapterPosition()));
-                notifyDataSetChanged();
+//                MydataBase mydataBase=new MydataBase(recycleviewActivity);
+//                mydataBase.deleteData(idList.get(holder.getAdapterPosition()));
+//                idList.remove(position);
+//                nameList.remove(holder.getAdapterPosition());
+//                emailList.remove(position);
+//                notifyDataSetChanged();
+                PopupMenu popupMenu=new PopupMenu(recycleviewActivity,holder.button);
+                recycleviewActivity.getMenuInflater().inflate(R.menu.menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if(menuItem.getItemId()==R.id.update)
+                        {
+                            Toast.makeText(recycleviewActivity, "Update", Toast.LENGTH_LONG).show();
+                            Dialog dialog=new Dialog(recycleviewActivity);
+                            dialog.setContentView(R.layout.dialog_layout);
+                            EditText txt1,txt2;
+                            Button update;
+                            txt1=dialog.findViewById(R.id.dialog_Name);
+                            txt2=dialog.findViewById(R.id.dialog_email);
+                            update=dialog.findViewById(R.id.dialog_Update);
+                            txt1.setText(""+nameList.get(position));
+                            txt2.setText(""+emailList.get(position));
+                            update.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    MydataBase mydataBase=new MydataBase(recycleviewActivity.getApplicationContext());
+                                    mydataBase.updateData(idList.get(position),txt1.getText().toString(),txt2.getText().toString());
+                                    Intent intent=new Intent(recycleviewActivity,RecycleviewActivity.class);
+                                    recycleviewActivity.startActivity(intent);
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+                        }
+                        if(menuItem.getItemId()==R.id.delete)
+                        {
+                            Toast.makeText(recycleviewActivity, "Delete", Toast.LENGTH_LONG).show();
+                            MydataBase mydataBase = new MydataBase(recycleviewActivity);
+                            mydataBase.deleteData(idList.get(holder.getAdapterPosition()));
+                            idList.remove(position);
+                            nameList.remove(holder.getAdapterPosition());
+                            emailList.remove(position);
+                            notifyDataSetChanged();
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
             }
         });
     }
